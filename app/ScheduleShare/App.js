@@ -4,12 +4,18 @@ import { Alert, StyleSheet, Text, View, Button } from 'react-native';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      className: "Empty"
+    };
   }
-  onPress() {
+
+  onPress = () => {
+    let self = this;
+
     fetch('http://localhost:3000/class/15411')
       .then((response) => response.json())
       .then((responseJson) => {
+        self.setState({className: responseJson['class']});
         Alert.alert('Title', responseJson['class']);
       })
       .catch((error) => {
@@ -20,9 +26,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
+        <Text>{this.state.className}</Text>
         <Button
           onPress={this.onPress}
           title="Learn More"
