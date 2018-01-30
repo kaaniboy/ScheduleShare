@@ -42,7 +42,8 @@ function parseHTML(html) {
 
 	details['endTime'] = $('.end-value').text();
 	details['days'] = $('.days-value').text();
-	
+	details['class'] = $('h2 > span').text().trim().replace("\n", "").replace(/\t/g, "");
+
 	return details;
 }
 
