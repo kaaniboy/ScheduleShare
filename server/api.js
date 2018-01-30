@@ -1,8 +1,9 @@
 const request = require("request").defaults({jar: true});
+const cheerio = require('cheerio');
 
 let sessionID = null;
 
-exports.getSessionID = (callback) => {
+function getSessionID(callback) {
 	if (sessionID) {
 		console.log("Using prior session ID.");
 		callback(null, sessionID);
@@ -28,8 +29,25 @@ exports.getSessionID = (callback) => {
 	});
 }
 
+function parseHTML(html) {
+	const $ = cheerio.load(html);
+
+	let details = {};
+
+	$('.start-value').each((i, element) => {
+		if (i == 1) {
+			details['startTime'] = $(element).text();
+		}
+	});
+
+	details['endTime'] = $('.end-value').text();
+	details['days'] = $('.days-value').text();
+	
+	return details;
+}
+
 exports.getClassDetails = (classID, callback) => {
-	exports.getSessionID((err, sessionID) => {
+	getSessionID((err, sessionID) => {
 		let options = {
 		  url: "https://webapp4.asu.edu/catalog/coursedetails?r=" + classID,
 		  headers: {
@@ -49,7 +67,12 @@ exports.getClassDetails = (classID, callback) => {
 
 		request.get(options, (error, response, body) => {
 			console.log("Received class details.");
-			callback(error, body);
+
+			if (error) {
+				callback(error, body);
+			} else {
+				callback(error, parseHTML(body));
+			}
 		});
 	});
 }

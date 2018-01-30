@@ -5,8 +5,8 @@ const app = express();
 app.get('/class/:classID', (req, res) => {
   let classID = req.params['classID'];
 
-  api.getClassDetails(classID, (err, response) => {
-    res.send(response);
+  api.getClassDetails(classID, (err, details) => {
+    res.send(details);
   });
 });
 
